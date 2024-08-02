@@ -11,6 +11,12 @@ Object::Object(vec2D initPos, float initMass, float initRadius, vec2D initVel,
 	dragCoefficient = initDragCoefficient;
 	color = initColor;
 
+	// reference area is the projected frontal area, not always its cross-sectional area
+	refArea = PI * radius * radius;
+	volume = (4 / 3) * radius * radius * radius;
+
+	stopwatch = 0.0f;
+
 }
 
 Object::~Object() {}
@@ -22,16 +28,16 @@ void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY,
 	// positive is to the right and down
 	vec2D gravityForce = { 0, mass * gravity };
 	forces.push_back(gravityForce); // force of gravity (f_g = mg)
-	// reference area is the projected frontal area, not always its cross-sectional area
-	refArea = PI * radius * radius;
+
+	// drag force (f_d = 0.5*p*C*A*v^2)
+
 	vec2D velSquared = vec2DElementwiseMult(vel, vel);
 	vec2D dragForce = velSquared * (0.5 * fluidDensity * dragCoefficient);
-	dragForce *= -1.0f; // opposes motion
-	forces.push_back(dragForce); // drag force (f_d = 0.5*p*C*A*v^2)
+	if (vel.x > 0) dragForce.x *= -1.0f; // opposes motion
+	if (vel.y > 0) dragForce.y *= -1.0f;
+	forces.push_back(dragForce); 
 	
-	for (auto& f : forces) {
-		netForce += f;
-	}
+	for (vec2D& f : forces) netForce += f;
 
 	accel = netForce / mass;
 
@@ -54,11 +60,16 @@ void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY,
 
 void Object::Draw(olc::PixelGameEngine* engine, float& pixelsPerMeter) {
 	engine->FillCircle({ (int)(pos.x * pixelsPerMeter), (int)(pos.y * pixelsPerMeter) }, 
-		radius, color);
+		radius * pixelsPerMeter, color);
 }
 
-void Object::UpdateStopwatch(float& fElapsedTime) {
-	if (pos.y < 50.0f) stopwatch += fElapsedTime;
+void Object::UpdateStopwatch(float& fElapsedTime, float& pixlesPerMeter) {
+	float maxDispY = 500.0f / pixlesPerMeter;
+	if (pos.y <= maxDispY && !reachedFinish) stopwatch += fElapsedTime;
+	else if (pos.y > maxDispY) {
+		vel.y *= -1.0f;
+		reachedFinish = true;
+	}
 }
 
 bool checkPtCircleCollision(vec2D& pt, Object& circle) {

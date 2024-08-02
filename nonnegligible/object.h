@@ -8,7 +8,7 @@
 
 class Object {
 public:
-	Object(vec2D initPos, float initMass = 1.0f, float initRadius = 3.0f, 
+	Object(vec2D initPos, float initMass = 1.0f, float initRadius = 1.0f, 
 		vec2D initVel = {0, 0}, vec2D initAccel = {0, 0}, float initDragCoefficient = 0.47,
 		olc::Pixel initColor = olc::BLACK);
 	~Object();
@@ -28,8 +28,8 @@ public:
 	float dragCoefficient; 
 	float refArea; // meters^2
 	float volume;
-	float staticFrictionCoefficient; 
-	float kineticFrictionCoefficient;
+	float sFricCoeff = 0.0f; 
+	float kFricCoeff = 0.0f;
 
 	float mass; // kilograms
 	
@@ -38,10 +38,11 @@ public:
 	olc::Pixel color;
 
 	float stopwatch;
+	bool reachedFinish = false;
 
 	void Update(float& fElapsedTime, float& gravity, float& relativeGroundY, float& fluidDensity);
 	void Draw(olc::PixelGameEngine* engine, float& pixelsPerMeter);
-	void UpdateStopwatch(float& fElapsedTime);
+	void UpdateStopwatch(float& fElapsedTime, float& pixlesPerMeter);
 };
 
 #endif

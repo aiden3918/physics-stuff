@@ -26,13 +26,14 @@ public:
         worldSize = screenSize / pixelsPerMeter;
         objects.push_back(testCircle);
 
-        envFluidDensity = fluidDensities.Vacuum;
+        envFluidDensity = fluidDensities.AirSTP;
+        finishLine = 500.0f / pixelsPerMeter;
 
         return true;
     }
 
     bool OnUserUpdate(float fElapsedTime) override {
-        Clear(olc::WHITE);
+        Clear(olc::GREY);
 
         DrawStringDecal({ 5.0f, 5.0f }, "Screen: " + std::to_string((int)worldSize.x) + "m x " +
             std::to_string((int)worldSize.y) + "m", olc::BLACK);
@@ -40,7 +41,7 @@ public:
         for (Object& o : objects) {
             o.Update(fElapsedTime, gravityAccel, screenSize.y, envFluidDensity);
             o.Draw(this, pixelsPerMeter);
-            o.UpdateStopwatch(fElapsedTime);
+            o.UpdateStopwatch(fElapsedTime, pixelsPerMeter);
         }
 
         //if (GetKey(olc::SPACE).bPressed) {
@@ -63,10 +64,10 @@ public:
             " sec", olc::BLACK);
 
         DrawLineDecal({ 0.0f, 500.0f }, { screenSize.x, 500.0f }, olc::GREEN);
-        DrawStringDecal({ 5.0f, 500.0f }, "50 m from top", olc::GREEN);
+        DrawStringDecal({ 5.0f, 510.0f }, std::to_string(finishLine) + " m from top", olc::GREEN);
 
-        DrawStringDecal({ 5.0f, 200.0f }, "Time to reach 50m: " + std::to_string(firstObj->stopwatch),
-            olc::BLACK);
+        DrawStringDecal({ 5.0f, 200.0f }, "Time to reach " + std::to_string(finishLine) + "m: " +
+            std::to_string(firstObj->stopwatch) + "sec", olc::BLACK);
 
         return true;
     }
@@ -80,10 +81,12 @@ public:
     float envFluidDensity;
     // float airFluidDensity = 0.0f;
 
+    float finishLine;
+
 private:
     std::vector<Object> objects;
 
-    float pixelsPerMeter = 10.0f; // conversion from screen space to world space
+    float pixelsPerMeter = 20.0f; // conversion from screen space to world space
     float gravityAccel = 9.8f;
 
     FluidDensities fluidDensities;
