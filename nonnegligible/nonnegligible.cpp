@@ -22,11 +22,12 @@ public:
 
     bool OnUserCreate() override{
         Object testCircle = Object({ 0.5f * screenSize.x / pixelsPerMeter, 0 });
+        testCircle.mass = 100.0f;
 
         worldSize = screenSize / pixelsPerMeter;
         objects.push_back(testCircle);
 
-        envFluidDensity = fluidDensities.Vacuum;
+        envFluidDensity = fluidDensities.AirSTP;
 
         return true;
     }

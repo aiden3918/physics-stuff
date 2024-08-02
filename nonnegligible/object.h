@@ -18,21 +18,21 @@ public:
 	float speed; // meters/second
 	vec2D accel; // meters/(second^2)
 
-	float radius; // meters
-
 	vec2D netForce; // newtons
 	vec2D momentum; // newton * seconds
 	float kineticEnergy; // joules
 	float potentialGravEnergy; // joules
 
-	float dragCoefficient; 
+	float dragCoefficient; // no unit
 	float refArea; // meters^2
-	float volume;
-	float staticFrictionCoefficient; 
-	float kineticFrictionCoefficient;
+	float staticFrictionCoefficient; // newtons/newtons
+	float kineticFrictionCoefficient; // newtons/newtons
 
 	float mass; // kilograms
-	
+	float density; // meters^3
+	float volume; // kilograms/(meters^3)
+	float radius; // meters
+
 	std::vector<vec2D> forces;
 	
 	olc::Pixel color;
