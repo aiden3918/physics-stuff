@@ -12,17 +12,19 @@
 #define PI 3.14159f
 
 struct vec2D {
+	vec2D() {}
+	vec2D(float x, float y) { this->x = x; this->y = y; }
 	float x = 0.0f;
 	float y = 0.0f;
-	bool operator == (vec2D& rhs) { return (this->x == rhs.x) && (this->x == rhs.y); }
-	vec2D operator + (vec2D& rhs) { return { this->x + rhs.x, this->y + rhs.y };  }
-	vec2D operator - (vec2D& rhs) { return { this->x - rhs.x, this->y - rhs.y }; }
-	vec2D operator * (float& factor) { return { factor * this->x, factor * this->y }; }
-	vec2D operator / (float& factor) { return { factor / this->x, factor / this->y }; }
-	void operator += (vec2D& rhs) { this->x + rhs.x; this->y + rhs.y; }
-	void operator -= (vec2D& rhs) { this->x - rhs.x; this->y - rhs.y; }
-	void operator *= (float &factor) { this->x * factor; this->y * factor; }
-	void operator /= (float& factor) { this->x / factor; this->y / factor; }
+	bool operator == (vec2D rhs) const { return (this->x == rhs.x) && (this->x == rhs.y); }
+	vec2D operator + (vec2D rhs) const { return vec2D(this->x + rhs.x, this->y + rhs.y);  }
+	vec2D operator - (vec2D rhs) const { return vec2D(this->x - rhs.x, this->y - rhs.y); }
+	vec2D operator * (float factor) const { return vec2D(this->x * factor, this->y * factor); }
+	vec2D operator / (float factor) const { return vec2D(this->x / factor, this->y / factor); }
+	vec2D& operator += (vec2D rhs) { this->x += rhs.x; this->y += rhs.y; return *this; }
+	vec2D& operator -= (vec2D rhs) { this->x -= rhs.x; this->y -= rhs.y; return *this; }
+	vec2D& operator *= (float factor) { this->x *= factor; this->y *= factor; return *this; }
+	vec2D& operator /= (float factor) { this->x /= factor; this->y /= factor; return *this; }
 	float mag() { return sqrt(this->x * this->x + this->y * this->y); }
 	vec2D norm() { return { this->x / mag(), this->y / mag() }; }
 };

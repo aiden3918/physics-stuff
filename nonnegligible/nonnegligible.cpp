@@ -16,6 +16,8 @@ public:
 
     bool OnUserCreate() override{
         Object testCircle = Object({ 40, 1 });
+        float fPPM = (float)pixelsPerMeter;
+        worldSize = screenSize / fPPM;
         objects.push_back(testCircle);
 
         return true;
@@ -23,18 +25,31 @@ public:
 
     bool OnUserUpdate(float fElapsedTime) override {
         Clear(olc::WHITE);
+
+        DrawStringDecal({ 5.0f, 5.0f }, "Screen: " + std::to_string((int)worldSize.x) + "m x " +
+            std::to_string((int)worldSize.y) + "m", olc::BLACK);
         
         for (Object& o : objects) {
-            o.Update(fElapsedTime, gravityAccel, screenSize.y);
+            o.Update(fElapsedTime, gravityAccel, screenSize.y, airFluidDensity);
             o.Draw(this, pixelsPerMeter);
         }
 
-        if (GetKey(olc::SPACE).bPressed) {
-            for (Object& o : objects) {
-                std::cout << "(" << o.pos.x << ", " << o.pos.y << ")" << std::endl;
-            }
-        }
+        //if (GetKey(olc::SPACE).bPressed) {
+        //    for (Object& o : objects) {
+        //        std::cout << "pos: (" << o.pos.x << ", " << o.pos.y << ")" << std::endl;
+        //        std::cout << "vel: (" << o.vel.x << ", " << o.vel.y << ")" << std::endl;
+        //        std::cout << "accel: (" << o.accel.x << ", " << o.accel.y << ")" << std::endl << std::endl;
+        //        
+        //    }
+        //}
 
+        Object* firstObj = &objects[0];
+        DrawStringDecal({ 5.0f, 100.0f }, "pos: (" + std::to_string(firstObj->pos.x) +
+            ", " + std::to_string(firstObj->pos.y) + ")", olc::BLACK);
+        DrawStringDecal({ 5.0f, 110.0f }, "vel: (" + std::to_string(firstObj->vel.x) +
+            ", " + std::to_string(firstObj->vel.y) + ")", olc::BLACK);
+        DrawStringDecal({ 5.0f, 120.0f }, "accel: (" + std::to_string(firstObj->accel.x) +
+            ", " + std::to_string(firstObj->accel.y) + ")", olc::BLACK);
 
         return true;
     }
@@ -44,6 +59,10 @@ public:
     }
 
     vec2D screenSize;
+    vec2D worldSize;
+    float airFluidDensity = 1.292f;
+    // float airFluidDensity = 0.0f;
+
 private:
     std::vector<Object> objects;
 

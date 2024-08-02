@@ -1,23 +1,33 @@
 #include "object.h"
 
 Object::Object(vec2D initPos, float initMass, float initRadius, vec2D initVel,
-	vec2D initAccel, olc::Pixel initColor) {
+	vec2D initAccel, float initDragCoefficient, olc::Pixel initColor) {
 
 	pos = initPos;
 	mass = initMass;
 	radius = initRadius;
 	vel = initVel;
 	accel = initAccel;
+	dragCoefficient = initDragCoefficient;
+	color = initColor;
 
 }
 
 Object::~Object() {}
 
-void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY) {
+void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY, float& fluidDensity) {
 	forces.clear();
 	netForce = { 0, 0 };
 
-	forces.push_back({ 0, mass * gravity }); // force of gravity 
+	// positive is to the right and down
+	vec2D gravityForce = { 0, mass * gravity };
+	forces.push_back(gravityForce); // force of gravity (f_g = mg)
+	// reference area is the projected frontal area, not always its cross-sectional area
+	refArea = PI * radius * radius;
+	vec2D velSquared = vec2DElementwiseMult(vel, vel);
+	vec2D dragForce = velSquared * (0.5 * fluidDensity * dragCoefficient);
+	dragForce *= -1.0f; // opposes motion
+	forces.push_back(dragForce); // drag force (f_d = 0.5*p*C*A*v^2)
 	
 	for (auto& f : forces) {
 		netForce += f;
@@ -43,6 +53,12 @@ void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY)
 }
 
 void Object::Draw(olc::PixelGameEngine* engine, int& pixelsPerMeter) {
-	engine->FillCircle({ (int)pos.x * pixelsPerMeter, (int)pos.y * pixelsPerMeter}, 
-		radius, olc::WHITE);
+	engine->FillCircle({ (int)(pos.x * (float)pixelsPerMeter), (int)(pos.y * (float)pixelsPerMeter) }, 
+		radius, color);
+}
+
+bool checkPtCircleCollision(vec2D& pt, Object& circle) {
+	vec2D mouseDisp = circle.pos - pt;
+	float mouseHyp = mouseDisp.mag();
+	return (circle.radius <= mouseHyp) ? true : false;
 }
