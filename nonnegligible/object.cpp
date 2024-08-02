@@ -52,9 +52,13 @@ void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY,
 
 }
 
-void Object::Draw(olc::PixelGameEngine* engine, int& pixelsPerMeter) {
-	engine->FillCircle({ (int)(pos.x * (float)pixelsPerMeter), (int)(pos.y * (float)pixelsPerMeter) }, 
+void Object::Draw(olc::PixelGameEngine* engine, float& pixelsPerMeter) {
+	engine->FillCircle({ (int)(pos.x * pixelsPerMeter), (int)(pos.y * pixelsPerMeter) }, 
 		radius, color);
+}
+
+void Object::UpdateStopwatch(float& fElapsedTime) {
+	if (pos.y < 50.0f) stopwatch += fElapsedTime;
 }
 
 bool checkPtCircleCollision(vec2D& pt, Object& circle) {

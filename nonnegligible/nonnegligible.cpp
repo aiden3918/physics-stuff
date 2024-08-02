@@ -8,6 +8,12 @@
 #include "object.h"
 #include <iostream>
 
+const struct FluidDensities {
+    float AirSTP = 1.292f;
+    float Vacuum = 0.0f;
+    float WaterSTP = 997.0f;
+};
+
 class App : public olc::PixelGameEngine {
 public:
     App() {
@@ -15,10 +21,12 @@ public:
     }
 
     bool OnUserCreate() override{
-        Object testCircle = Object({ 40, 1 });
-        float fPPM = (float)pixelsPerMeter;
-        worldSize = screenSize / fPPM;
+        Object testCircle = Object({ 0.5f * screenSize.x / pixelsPerMeter, 0 });
+
+        worldSize = screenSize / pixelsPerMeter;
         objects.push_back(testCircle);
+
+        envFluidDensity = fluidDensities.Vacuum;
 
         return true;
     }
@@ -30,8 +38,9 @@ public:
             std::to_string((int)worldSize.y) + "m", olc::BLACK);
         
         for (Object& o : objects) {
-            o.Update(fElapsedTime, gravityAccel, screenSize.y, airFluidDensity);
+            o.Update(fElapsedTime, gravityAccel, screenSize.y, envFluidDensity);
             o.Draw(this, pixelsPerMeter);
+            o.UpdateStopwatch(fElapsedTime);
         }
 
         //if (GetKey(olc::SPACE).bPressed) {
@@ -50,6 +59,14 @@ public:
             ", " + std::to_string(firstObj->vel.y) + ")", olc::BLACK);
         DrawStringDecal({ 5.0f, 120.0f }, "accel: (" + std::to_string(firstObj->accel.x) +
             ", " + std::to_string(firstObj->accel.y) + ")", olc::BLACK);
+        DrawStringDecal({ 5.0f, 130.0f }, "stopwatch: " + std::to_string(firstObj->stopwatch) + 
+            " sec", olc::BLACK);
+
+        DrawLineDecal({ 0.0f, 500.0f }, { screenSize.x, 500.0f }, olc::GREEN);
+        DrawStringDecal({ 5.0f, 500.0f }, "50 m from top", olc::GREEN);
+
+        DrawStringDecal({ 5.0f, 200.0f }, "Time to reach 50m: " + std::to_string(firstObj->stopwatch),
+            olc::BLACK);
 
         return true;
     }
@@ -60,14 +77,16 @@ public:
 
     vec2D screenSize;
     vec2D worldSize;
-    float airFluidDensity = 1.292f;
+    float envFluidDensity;
     // float airFluidDensity = 0.0f;
 
 private:
     std::vector<Object> objects;
 
-    int pixelsPerMeter = 10; // conversion from screen space to world space
+    float pixelsPerMeter = 10.0f; // conversion from screen space to world space
     float gravityAccel = 9.8f;
+
+    FluidDensities fluidDensities;
 };
 
 int main()

@@ -1,0 +1,44 @@
+On kinematics simulation:
+
+No air resistance (calculated vs 3 simulated trials, ~900 fps)
+- 50 m drop: 
+	3.194382825... sec
+	3.192904 sec
+	3.192253 sec
+	3.192786 sec
+	simulated avg: 3.192647667... sec
+
+- 100 m drop:
+	4.517539515... sec
+	4.515608 sec
+	4.515676 sec
+	4.515862 sec
+	simulated avg: 4.515715333... sec
+	difference: 0.001824182 sec
+
+- 250 m drop: 
+	7.142857143... sec (sevenths, wow)
+	7.140633 sec
+	7.141733 sec
+	7.142088 sec
+	simulated avg: 7.141484667... sec
+	difference: 0.001372476 sec
+
+- 1000 m drop:
+	14.28571429... sec (another seventh)
+	14.283989 sec
+	14.283798 sec
+	14.283903 sec
+	simulated avg: 14.28389667
+	difference: 0.00324623 sec
+
+Simulated estimation is quite accurate for small times, but there is a greater inaccuracy 
+as the theoretical time increases
+Likely due to floating point errors
+I'd imagine that a lower fps would also increase inaccuracy
+
+------------------------------------------------------------------------------------------------
+
+On air resistance:
+
+Velocity seems to asymptotically reach terminal velocity over time
