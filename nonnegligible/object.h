@@ -9,7 +9,7 @@
 class Object {
 public:
 	Object(vec2D initPos, float initMass = 1.0f, float initRadius = 1.0f, 
-		vec2D initVel = {0, 0}, vec2D initAccel = {0, 0}, float initDragCoefficient = 0.47,
+		vec2D initVel = {0, 0}, vec2D initAccel = {0, 0}, float initDragCoefficient = 0.0f,
 		olc::Pixel initColor = olc::BLACK);
 	~Object();
 

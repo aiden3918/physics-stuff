@@ -8,10 +8,22 @@
 #include "object.h"
 #include <iostream>
 
+// higher fluid density, more drag
 const struct FluidDensities {
-    float AirSTP = 1.292f;
-    float Vacuum = 0.0f;
-    float WaterSTP = 997.0f;
+    const float AirSTP = 1.292f;
+    const float Vacuum = 0.0f;
+    const float WaterSTP = 997.0f;
+};
+
+// smaller drag coefficient = more aerodynamic
+// all are estimations of shapes when oriented to be the most aerodynamic
+const struct DragCoefficients {
+    const float Sphere = 0.47f;
+    const float Cone = 0.50f;
+    const float Airfoil = 0.045f;
+    const float FlatPlate = 1.28f;
+    const float Bullet = 0.295;
+    const float Cube = 1.05f;
 };
 
 class App : public olc::PixelGameEngine {
@@ -22,12 +34,13 @@ public:
 
     bool OnUserCreate() override{
         Object testCircle = Object({ 0.5f * screenSize.x / pixelsPerMeter, 0 });
-
-        worldSize = screenSize / pixelsPerMeter;
+        testCircle.dragCoefficient = dragCoefficients.Sphere;
         objects.push_back(testCircle);
 
         envFluidDensity = fluidDensities.AirSTP;
         finishLine = 500.0f / pixelsPerMeter;
+
+        worldSize = screenSize / pixelsPerMeter;
 
         return true;
     }
@@ -90,6 +103,7 @@ private:
     float gravityAccel = 9.8f;
 
     FluidDensities fluidDensities;
+    DragCoefficients dragCoefficients;
 };
 
 int main()
