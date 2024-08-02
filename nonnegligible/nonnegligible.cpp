@@ -34,13 +34,13 @@ public:
 
     bool OnUserCreate() override{
         Object testCircle = Object({ 0.5f * screenSize.x / pixelsPerMeter, 0 });
-        testCircle.dragCoefficient = dragCoefficients.Sphere;
-        objects.push_back(testCircle);
 
         envFluidDensity = fluidDensities.AirSTP;
         finishLine = 500.0f / pixelsPerMeter;
 
         worldSize = screenSize / pixelsPerMeter;
+
+        envFluidDensity = fluidDensities.Vacuum;
 
         return true;
     }
