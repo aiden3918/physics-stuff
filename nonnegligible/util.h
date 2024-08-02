@@ -19,6 +19,12 @@ struct vec2D {
 	vec2D operator - (vec2D& rhs) { return { this->x - rhs.x, this->y - rhs.y }; }
 	vec2D operator * (float& factor) { return { factor * this->x, factor * this->y }; }
 	vec2D operator / (float& factor) { return { factor / this->x, factor / this->y }; }
+	void operator += (vec2D& rhs) { this->x + rhs.x; this->y + rhs.y; }
+	void operator -= (vec2D& rhs) { this->x - rhs.x; this->y - rhs.y; }
+	void operator *= (float &factor) { this->x * factor; this->y * factor; }
+	void operator /= (float& factor) { this->x / factor; this->y / factor; }
+	float mag() { return sqrt(this->x * this->x + this->y * this->y); }
+	vec2D norm() { return { this->x / mag(), this->y / mag() }; }
 };
 
 struct AABB {
