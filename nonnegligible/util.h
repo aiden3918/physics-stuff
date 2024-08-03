@@ -27,6 +27,7 @@ struct vec2D {
 	vec2D& operator /= (float factor) { this->x /= factor; this->y /= factor; return *this; }
 	float mag() { return sqrt(this->x * this->x + this->y * this->y); }
 	vec2D norm() { return { this->x / mag(), this->y / mag() }; }
+	// vec2D abs() { return vec2D(std::abs(this->x), std::abs(this->y)); }
 };
 
 struct AABB {

@@ -34,19 +34,34 @@ public:
 
     bool OnUserCreate() override{
         Object testCircle = Object({ 0.5f * screenSize.x / pixelsPerMeter, 0 });
+        testCircle.mass = 2.0f;
+        testCircle.dragCoefficient = dragCoefficients.Sphere;
+        testCircle.vel = { 10.0f, 10.0f };
+        objects.push_back(testCircle);
 
-        envFluidDensity = fluidDensities.AirSTP;
         finishLine = 500.0f / pixelsPerMeter;
 
         worldSize = screenSize / pixelsPerMeter;
 
-        envFluidDensity = fluidDensities.Vacuum;
+        // envFluidDensity = fluidDensities.Vacuum;
+        envFluidDensity = fluidDensities.AirSTP;
 
         return true;
     }
 
     bool OnUserUpdate(float fElapsedTime) override {
-        Clear(olc::GREY);
+        if (envFluidDensity == fluidDensities.AirSTP) {
+            Clear(olc::GREY);
+        }
+        else if (envFluidDensity == fluidDensities.Vacuum) {
+            Clear(olc::BLACK);
+        }
+        else if (envFluidDensity == fluidDensities.WaterSTP) {
+            Clear(olc::BLUE);
+        }
+
+
+        vec2D mousePos = { (float)GetMouseX(), (float)GetMouseY() };
 
         DrawStringDecal({ 5.0f, 5.0f }, "Screen: " + std::to_string((int)worldSize.x) + "m x " +
             std::to_string((int)worldSize.y) + "m", olc::BLACK);
@@ -55,6 +70,16 @@ public:
             o.Update(fElapsedTime, gravityAccel, screenSize.y, envFluidDensity);
             o.Draw(this, pixelsPerMeter);
             o.UpdateStopwatch(fElapsedTime, pixelsPerMeter);
+        }
+
+        if (GetMouse(olc::Mouse::LEFT).bHeld) {
+            for (Object& o : objects) {
+                if (o.checkPtCollision(mousePos, pixelsPerMeter)) {
+                    o.pos = mousePos / pixelsPerMeter;
+                    o.vel = { 0, 0 };
+                    o.accel= { 0, 0 };
+                }
+            }
         }
 
         //if (GetKey(olc::SPACE).bPressed) {
@@ -81,6 +106,8 @@ public:
 
         DrawStringDecal({ 5.0f, 200.0f }, "Time to reach " + std::to_string(finishLine) + "m: " +
             std::to_string(firstObj->stopwatch) + "sec", olc::BLACK);
+
+        DrawStringDecal({ 5.0f, 300.0f }, "Forces at play:\nGravity\nDrag\nBuoyancy");
 
         return true;
     }

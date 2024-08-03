@@ -43,6 +43,7 @@ public:
 	void Update(float& fElapsedTime, float& gravity, float& relativeGroundY, float& fluidDensity);
 	void Draw(olc::PixelGameEngine* engine, float& pixelsPerMeter);
 	void UpdateStopwatch(float& fElapsedTime, float& pixlesPerMeter);
+	bool checkPtCollision(vec2D &pt, float& pixelsPerMeter);
 };
 
 #endif

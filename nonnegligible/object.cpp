@@ -32,16 +32,17 @@ void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY,
 	// reference area is the projected frontal area, not always its cross-sectional area
 	vec2D velSquared = vec2DElementwiseMult(vel, vel);
 	vec2D dragForce = velSquared * (0.5 * fluidDensity * dragCoefficient);
-	dragForce *= -1.0f; // opposes motion
+	if (vel.x > 0) dragForce.x *= -1.0f; // opposes motion
+	if (vel.y > 0) dragForce.y *= -1.0f;
 	forces.push_back(dragForce); // drag force (f_d = 0.5*p*C*A*v^2)
 
-	float displacedVolume;
+	float displacedVolume = 0.0f;
 	if (pos.y > radius) displacedVolume = volume;
 	// volume of section of circle (derived by integration): 
 	// V = PI * [(r^2)(B - A) + (1/3)(A^3 - B^3)]
 	// where A = starting point, B = ending point, R = radius
 	else if (pos.y > -radius) {
-		float A = -radius;
+		float A = -pos.y;
 		float B = radius;
 		displacedVolume = 
 			PI * (((radius * radius) * (B - A)) + (((A * A * A) - (B * B * B)) / 3.0f));
@@ -84,8 +85,11 @@ void Object::UpdateStopwatch(float& fElapsedTime, float& pixlesPerMeter) {
 	}
 }
 
-bool checkPtCircleCollision(vec2D& pt, Object& circle) {
-	vec2D mouseDisp = circle.pos - pt;
-	float mouseHyp = mouseDisp.mag();
-	return (circle.radius <= mouseHyp) ? true : false;
+bool Object::checkPtCollision(vec2D& pt, float &pixelsPerMeter) {
+	vec2D mouseDist = (pos * pixelsPerMeter) - pt;
+	float mouseHyp = mouseDist.mag();
+	std::cout << "mouseHyp: " << mouseHyp << " | screen radius: " << radius * pixelsPerMeter << std::endl;
+	bool colliding = (radius <= mouseHyp);
+	std::cout << colliding << std::endl;
+	return colliding;
 }
