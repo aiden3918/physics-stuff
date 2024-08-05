@@ -67,6 +67,23 @@ inline float degToRad(float& deg) { return deg * PI / 180.0f; }
 // distance
 inline float getDist(vec2D& a, vec2D& b) { return sqrt(((b.y - a.y) * (b.y - a.y)) + ((b.x - a.x) * (b.x - a.x))); }
 
+// powers
+template <typename T>
+T square(T num) { return num * num; }
+template <typename T>
+T cube(T num) { return num * num * num; }
+template <typename T>
+T pow(T num, unsigned short power) { 
+	if (power == 0) return T(1);
+	else {
+		T product = 1;
+		for (short i = 1; i <= power; i++) {
+			product *= num;
+		}
+		return product;
+	}
+}
+
 // get image size of png
 // courtesy of Aliaksei Luferau
 // https://stackoverflow.com/a/69105584

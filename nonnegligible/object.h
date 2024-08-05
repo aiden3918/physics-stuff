@@ -40,10 +40,13 @@ public:
 	float stopwatch;
 	bool reachedFinish = false;
 
-	void Update(float& fElapsedTime, float& gravity, float& relativeGroundY, float& fluidDensity);
+	void Update(float& fElapsedTime, float& gravity, float& relativeGroundY, float& fluidDensity, 
+		vec2D& screenSize, float& pixelsPerMeter);
 	void Draw(olc::PixelGameEngine* engine, float& pixelsPerMeter);
 	void UpdateStopwatch(float& fElapsedTime, float& pixlesPerMeter);
 	bool checkPtCollision(vec2D &pt, float& pixelsPerMeter);
+	void updateMass(const float& m);
+	void updateVolume(const float& v);
 };
 
 #endif

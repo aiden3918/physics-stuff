@@ -12,8 +12,8 @@ Object::Object(vec2D initPos, float initMass, float initRadius, vec2D initVel,
 	color = initColor;
 	
 	// sphere
-	refArea = PI * radius * radius;
-	volume = (4.0f / 3.0f) * radius * radius * radius;
+	refArea = PI * square(radius);
+	volume = (4.0f / 3.0f) * cube(radius);
 	
 	density = mass / volume;
 
@@ -21,7 +21,9 @@ Object::Object(vec2D initPos, float initMass, float initRadius, vec2D initVel,
 
 Object::~Object() {}
 
-void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY, float& fluidDensity) {
+void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY, 
+	float& fluidDensity, vec2D& screenSize, float& pixelsPerMeter) 
+{
 	forces.clear();
 	netForce = { 0, 0 };
 
@@ -29,6 +31,7 @@ void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY,
 	vec2D gravityForce = { 0, mass * gravity };
 	forces.push_back(gravityForce); // force of gravity (f_g = mg)
 
+	// NOTE: drag coefficient (and even the drag formula itself) differs depending on velocity
 	// reference area is the projected frontal area, not always its cross-sectional area
 	vec2D velSquared = vec2DElementwiseMult(vel, vel);
 	vec2D dragForce = velSquared * (0.5 * fluidDensity * dragCoefficient);
@@ -36,19 +39,21 @@ void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY,
 	if (vel.y > 0) dragForce.y *= -1.0f;
 	forces.push_back(dragForce); // drag force (f_d = 0.5*p*C*A*v^2)
 
+	// DEBUG: something weird that turns accel into NaN
+	// formula works by experimentation
 	float displacedVolume = 0.0f;
 	if (pos.y > radius) displacedVolume = volume;
-	// volume of section of circle (derived by integration): 
-	// V = PI * [(r^2)(B - A) + (1/3)(A^3 - B^3)]
-	// where A = starting point, B = ending point, R = radius
-	else if (pos.y > -radius) {
+	//volume of section of circle (derived by integration): 
+	//V = PI * [(r^2)(B - A) + (1/3)(A^3 - B^3)]
+	//where A = starting point, B = ending point, R = radius
+	else if (pos.y > 0.0f) {
 		float A = -pos.y;
 		float B = radius;
 		displacedVolume = 
-			PI * (((radius * radius) * (B - A)) + (((A * A * A) - (B * B * B)) / 3.0f));
+			PI * ((square<float>(radius) * (B - A)) + ((cube<float>(A) - cube<float>(B)) / 3.0f));
 	}
 	vec2D buoyancyForce = {0, -fluidDensity * gravity * displacedVolume}; // buoyancy force (f_b = -pgV)
-	if (pos.y > 0) forces.push_back(buoyancyForce);
+	forces.push_back(buoyancyForce);
 
 	for (vec2D& f : forces) netForce += f;
 
@@ -57,6 +62,7 @@ void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY,
 	vec2D deltaVel = accel * fElapsedTime;
 	vel += deltaVel;
 	speed = vel.mag();
+	if (pos.x * pixelsPerMeter > screenSize.x || pos.x < 0.0f) vel.x *= -1.0f;
 
 	vec2D disp = vel * fElapsedTime;
 	pos += disp;
@@ -72,6 +78,7 @@ void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY,
 }
 
 void Object::Draw(olc::PixelGameEngine* engine, float& pixelsPerMeter) {
+
 	engine->FillCircle({ (int)(pos.x * pixelsPerMeter), (int)(pos.y * pixelsPerMeter) }, 
 		radius * pixelsPerMeter, color);
 }
@@ -86,10 +93,18 @@ void Object::UpdateStopwatch(float& fElapsedTime, float& pixlesPerMeter) {
 }
 
 bool Object::checkPtCollision(vec2D& pt, float &pixelsPerMeter) {
-	vec2D mouseDist = (pos * pixelsPerMeter) - pt;
+	vec2D mouseDist = (pt / pixelsPerMeter) - pos;
 	float mouseHyp = mouseDist.mag();
-	std::cout << "mouseHyp: " << mouseHyp << " | screen radius: " << radius * pixelsPerMeter << std::endl;
-	bool colliding = (radius <= mouseHyp);
-	std::cout << colliding << std::endl;
+	bool colliding = (mouseHyp < radius);
 	return colliding;
+}
+
+void Object::updateMass(const float& m) {
+	mass = m;
+	density = mass / volume;
+}
+
+void Object::updateVolume(const float& v) {
+	volume = v;
+	density = mass / volume;
 }
