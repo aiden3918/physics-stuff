@@ -21,7 +21,7 @@ Object::Object(vec2D initPos, float initMass, float initRadius, vec2D initVel,
 
 Object::~Object() {}
 
-void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY, 
+void Object::Update(float& fElapsedTime, float& gravity, double &relativeGroundY, 
 	float& fluidDensity, vec2D& screenSize, float& pixelsPerMeter) 
 {
 	forces.clear();
@@ -32,6 +32,9 @@ void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY,
 	forces.push_back(gravityForce); // force of gravity (f_g = mg)
 
 	// NOTE: drag coefficient (and even the drag formula itself) differs depending on velocity
+	// consult the reynolds number 
+	// DEBUG: water at stp launches ball into -oblivion on both axes
+	
 	// reference area is the projected frontal area, not always its cross-sectional area
 	vec2D velSquared = vec2DElementwiseMult(vel, vel);
 	vec2D dragForce = velSquared * (0.5 * fluidDensity * dragCoefficient);
@@ -39,18 +42,16 @@ void Object::Update(float& fElapsedTime, float& gravity, float &relativeGroundY,
 	if (vel.y > 0) dragForce.y *= -1.0f;
 	forces.push_back(dragForce); // drag force (f_d = 0.5*p*C*A*v^2)
 
-	// DEBUG: something weird that turns accel into NaN
-	// formula works by experimentation
 	float displacedVolume = 0.0f;
 	if (pos.y > radius) displacedVolume = volume;
 	//volume of section of circle (derived by integration): 
 	//V = PI * [(r^2)(B - A) + (1/3)(A^3 - B^3)]
 	//where A = starting point, B = ending point, R = radius
-	else if (pos.y > 0.0f) {
+	else if (pos.y > -radius) {
 		float A = -pos.y;
 		float B = radius;
 		displacedVolume = 
-			PI * ((square<float>(radius) * (B - A)) + ((cube<float>(A) - cube<float>(B)) / 3.0f));
+			PI * ((square<double>(radius) * (B - A)) + ((cube<double>(A) - cube<double>(B)) / 3.0f));
 	}
 	vec2D buoyancyForce = {0, -fluidDensity * gravity * displacedVolume}; // buoyancy force (f_b = -pgV)
 	forces.push_back(buoyancyForce);

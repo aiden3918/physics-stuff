@@ -40,7 +40,7 @@ public:
 	float stopwatch;
 	bool reachedFinish = false;
 
-	void Update(float& fElapsedTime, float& gravity, float& relativeGroundY, float& fluidDensity, 
+	void Update(float& fElapsedTime, float& gravity, double& relativeGroundY, float& fluidDensity, 
 		vec2D& screenSize, float& pixelsPerMeter);
 	void Draw(olc::PixelGameEngine* engine, float& pixelsPerMeter);
 	void UpdateStopwatch(float& fElapsedTime, float& pixlesPerMeter);

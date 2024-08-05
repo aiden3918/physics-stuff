@@ -130,14 +130,14 @@ public:
             }
 
 
-            //if (GetKey(olc::SPACE).bPressed) {
-            //    for (Object& o : objects) {
-            //        std::cout << "pos: (" << o.pos.x << ", " << o.pos.y << ")" << std::endl;
-            //        std::cout << "vel: (" << o.vel.x << ", " << o.vel.y << ")" << std::endl;
-            //        std::cout << "accel: (" << o.accel.x << ", " << o.accel.y << ")" << std::endl << std::endl;
-            //        
-            //    }
-            //}
+            if (GetKey(olc::SPACE).bPressed) {
+                for (Object& o : objects) {
+                    std::cout << "pos: (" << o.pos.x << ", " << o.pos.y << ")" << std::endl;
+                    std::cout << "vel: (" << o.vel.x << ", " << o.vel.y << ")" << std::endl;
+                    std::cout << "accel: (" << o.accel.x << ", " << o.accel.y << ")" << std::endl << std::endl;
+                    
+                }
+            }
 
             Object* firstObj = &objects[0];
             DrawStringDecal({ 5.0f, 100.0f }, "pos: (" + std::to_string(firstObj->pos.x) +
@@ -149,7 +149,7 @@ public:
             DrawStringDecal({ 5.0f, 130.0f }, "stopwatch: " + std::to_string(firstObj->stopwatch) +
                 " sec", olc::BLACK);
 
-            DrawLineDecal({ 0.0f, 500.0f }, { screenSize.x, 500.0f }, olc::GREEN);
+            DrawLineDecal({ 0.0f, 500.0f }, { (float)screenSize.x, 500.0f }, olc::GREEN);
             DrawStringDecal({ 5.0f, 510.0f }, std::to_string(finishLine) + " m from top", olc::GREEN);
 
             DrawStringDecal({ 5.0f, 200.0f }, "Time to reach " + std::to_string(finishLine) + "m: " +

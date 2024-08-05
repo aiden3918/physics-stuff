@@ -13,9 +13,9 @@
 
 struct vec2D {
 	vec2D() {}
-	vec2D(float x, float y) { this->x = x; this->y = y; }
-	float x = 0.0f;
-	float y = 0.0f;
+	vec2D(double x, double y) { this->x = x; this->y = y; }
+	double x = 0.0f;
+	double y = 0.0f;
 	bool operator == (vec2D rhs) const { return (this->x == rhs.x) && (this->x == rhs.y); }
 	vec2D operator + (vec2D rhs) const { return vec2D(this->x + rhs.x, this->y + rhs.y);  }
 	vec2D operator - (vec2D rhs) const { return vec2D(this->x - rhs.x, this->y - rhs.y); }
