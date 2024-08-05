@@ -33,7 +33,8 @@ void Object::Update(float& fElapsedTime, float& gravity, double &relativeGroundY
 
 	// NOTE: drag coefficient (and even the drag formula itself) differs depending on velocity
 	// consult the reynolds number 
-	// DEBUG: water at stp launches ball into -oblivion on both axes
+	// DEBUG: water at stp launches ball into -oblivion on both axes (not bugged, but calculations
+	// might be wrong)
 	
 	// reference area is the projected frontal area, not always its cross-sectional area
 	vec2D velSquared = vec2DElementwiseMult(vel, vel);
