@@ -102,4 +102,18 @@ inline vec2D get_png_image_dimensions(std::string& file_path)
 	return size;
 }
 
+inline bool isIntOrFloat(const std::string string) {
+	int decimals = 0;
+	for (const char& c : string) {
+		if (c == '.') {
+			// too many decimals? not a float
+			decimals++;
+			if (decimals > 1) return false;
+		}
+		else if (!isdigit(c)) return false;
+	}
+
+	return true;
+}
+
 #endif // !util_h

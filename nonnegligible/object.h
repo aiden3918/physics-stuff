@@ -47,6 +47,7 @@ public:
 	bool checkPtCollision(vec2D &pt, float& pixelsPerMeter);
 	void updateMass(const float& m);
 	void updateVolume(const float& v);
+	void setDensity(const float& mass, const float& radius);
 };
 
 #endif

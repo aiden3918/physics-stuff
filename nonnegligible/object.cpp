@@ -13,7 +13,7 @@ Object::Object(vec2D initPos, float initMass, float initRadius, vec2D initVel,
 	
 	// sphere
 	refArea = PI * square(radius);
-	volume = (4.0f / 3.0f) * cube(radius);
+	volume = (4.0f / 3.0f) * cube(radius) * PI;
 	
 	density = mass / volume;
 
@@ -48,11 +48,11 @@ void Object::Update(float& fElapsedTime, float& gravity, double &relativeGroundY
 	//volume of section of circle (derived by integration): 
 	//V = PI * [(r^2)(B - A) + (1/3)(A^3 - B^3)]
 	//where A = starting point, B = ending point, R = radius
-	else if (pos.y > -radius) {
+	else if (pos.y > 0.0f) {
 		float A = -pos.y;
 		float B = radius;
-		displacedVolume = 
-			PI * ((square<double>(radius) * (B - A)) + ((cube<double>(A) - cube<double>(B)) / 3.0f));
+		displacedVolume = PI * ((square<double>(radius) * (B - A)) +
+			((cube<double>(A) - cube<double>(B)) / 3.0f));
 	}
 	vec2D buoyancyForce = {0, -fluidDensity * gravity * displacedVolume}; // buoyancy force (f_b = -pgV)
 	forces.push_back(buoyancyForce);
@@ -108,5 +108,17 @@ void Object::updateMass(const float& m) {
 
 void Object::updateVolume(const float& v) {
 	volume = v;
+	// should check shape of object first here, but oh well
+	radius = cbrtf(volume * 0.75f / PI);
+	density = mass / volume;
+}
+
+void Object::setDensity(const float& mass, const float& radius) {
+	if (mass <= 0.0f || radius <= 0.0f) return;
+
+	this->mass = mass;
+	this->radius = radius;
+
+	volume = (4.0f / 3.0f) * PI * cube<float>(radius);
 	density = mass / volume;
 }
