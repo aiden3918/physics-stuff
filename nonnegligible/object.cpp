@@ -48,7 +48,7 @@ void Object::Update(float& fElapsedTime, float& gravity, double &relativeGroundY
 	//volume of section of circle (derived by integration): 
 	//V = PI * [(r^2)(B - A) + (1/3)(A^3 - B^3)]
 	//where A = starting point, B = ending point, R = radius
-	else if (pos.y > 0.0f) {
+	else if (pos.y > -radius) {
 		float A = -pos.y;
 		float B = radius;
 		displacedVolume = PI * ((square<double>(radius) * (B - A)) +

@@ -205,8 +205,15 @@ public:
             DrawStringDecal({ 5.0f, 200.0f }, "Time to reach " + std::to_string(finishLine) + "m: " +
                 std::to_string(firstObj->stopwatch) + "sec", olc::BLACK);
 
-            DrawStringDecal({ 5.0f, 300.0f }, "Forces at play:\nGravity\nDrag\nBuoyancy", 
-                olc::BLACK);
+            if (envFluidDensity == _fluidDensities.Vacuum) {
+                DrawStringDecal({ 5.0f, 300.0f }, "Forces at play:\nGravity",
+                    olc::BLACK);
+            }
+            else {
+                DrawStringDecal({ 5.0f, 300.0f }, "Forces at play:\nGravity\nDrag\nBuoyancy",
+                    olc::BLACK);
+            }
+
 
             DrawStringDecal({ 5.0f, 350.0f }, "Mass: " + std::to_string(firstObj->mass)
                 + " kg", olc::BLACK);
