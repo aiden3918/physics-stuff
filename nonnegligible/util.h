@@ -19,15 +19,15 @@ struct vec2D {
 	bool operator == (vec2D rhs) const { return (this->x == rhs.x) && (this->x == rhs.y); }
 	vec2D operator + (vec2D rhs) const { return vec2D(this->x + rhs.x, this->y + rhs.y);  }
 	vec2D operator - (vec2D rhs) const { return vec2D(this->x - rhs.x, this->y - rhs.y); }
-	vec2D operator * (float factor) const { return vec2D(this->x * factor, this->y * factor); }
-	vec2D operator / (float factor) const { return vec2D(this->x / factor, this->y / factor); }
+	vec2D operator * (const float& factor) const { return vec2D(this->x * factor, this->y * factor); }
+	vec2D operator / (const float& factor) const { return vec2D(this->x / factor, this->y / factor); }
 	vec2D& operator += (vec2D rhs) { this->x += rhs.x; this->y += rhs.y; return *this; }
 	vec2D& operator -= (vec2D rhs) { this->x -= rhs.x; this->y -= rhs.y; return *this; }
 	vec2D& operator *= (float factor) { this->x *= factor; this->y *= factor; return *this; }
 	vec2D& operator /= (float factor) { this->x /= factor; this->y /= factor; return *this; }
 	float mag() { return sqrt(this->x * this->x + this->y * this->y); }
 	vec2D norm() { return { this->x / mag(), this->y / mag() }; }
-	// vec2D abs() { return vec2D(std::abs(this->x), std::abs(this->y)); }
+	vec2D abs() { return vec2D(std::abs(this->x), std::abs(this->y)); }
 };
 
 struct AABB {
@@ -45,8 +45,8 @@ inline vec2D vec2DAdd(vec2D& a, vec2D& b) { return { a.x + b.x, a.y + b.y }; }
 inline vec2D vec2DSub(vec2D& a, vec2D& b) { return { a.x - b.x, a.y - b.y }; }
 inline vec2D vec2DMult(vec2D& a, const float& val) { return { val * a.x, val * a.y }; }
 inline vec2D vec2DDiv(vec2D& a, const float& val) { return { a.x / val, a.y / val }; }
-inline vec2D vec2DElementwiseMult(vec2D& a, vec2D& b) { return { a.x * b.x, a.y * b.y }; }
-inline vec2D vec2DElementwiseDiv(vec2D& a, vec2D& b) { return { a.x / b.x, a.y / b.y }; }
+inline vec2D vec2DElementwiseMult(const vec2D& a, const vec2D& b) { return { a.x * b.x, a.y * b.y }; }
+inline vec2D vec2DElementwiseDiv(const vec2D& a, const vec2D& b) { return { a.x / b.x, a.y / b.y }; }
 inline vec2D dotProduct2D(vec2D& a, vec2D& b) { return { a.x * b.x, a.y * b.y }; }
 inline float vec2DMag(vec2D& vec) { return sqrt((vec.x * vec.x) + vec.y * vec.y); }
 inline vec2D vec2DNormalise(vec2D& vec) { return vec2DDiv(vec, vec2DMag(vec)); }
@@ -104,13 +104,16 @@ inline vec2D get_png_image_dimensions(std::string& file_path)
 
 inline bool isIntOrFloat(const std::string string) {
 	int decimals = 0;
-	for (const char& c : string) {
-		if (c == '.') {
+	for (int i = 0; i < string.length(); i++) {
+		if (string[i] == '.') {
 			// too many decimals? not a float
 			decimals++;
 			if (decimals > 1) return false;
 		}
-		else if (!isdigit(c)) return false;
+		else if (string[i] == '-') {
+			if (i != 0) return false;
+		}
+		else if (!isdigit(string[i])) return false;
 	}
 
 	return true;

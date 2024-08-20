@@ -33,15 +33,12 @@ void Object::Update(float& fElapsedTime, float& gravity, double &relativeGroundY
 
 	// NOTE: drag coefficient (and even the drag formula itself) differs depending on velocity
 	// consult the reynolds number 
-	// DEBUG: water at stp launches ball into -oblivion on both axes (not bugged, but calculations
-	// might be wrong)
+	// DEBUG: water at stp launches ball into -oblivion on both axes (seems to be caused by drag force)
 	
 	// reference area is the projected frontal area, not always its cross-sectional area
-	vec2D velSquared = vec2DElementwiseMult(vel, vel);
+	vec2D velSquared = vec2DElementwiseMult(vel.abs(), vel * -1.0f);
 	vec2D dragForce = velSquared * (0.5 * fluidDensity * dragCoefficient);
-	if (vel.x > 0) dragForce.x *= -1.0f; // opposes motion
-	if (vel.y > 0) dragForce.y *= -1.0f;
-	forces.push_back(dragForce); // drag force (f_d = 0.5*p*C*A*v^2)
+	// forces.push_back(dragForce); // drag force (f_d = 0.5*p*C*A*v^2)
 
 	float displacedVolume = 0.0f;
 	if (pos.y > radius) displacedVolume = volume;

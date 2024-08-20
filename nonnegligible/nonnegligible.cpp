@@ -8,6 +8,10 @@
 #include "object.h"
 #include <iostream>
 
+#define GRAV_CONST 6.67e-11
+#define EARTH_MASS 5.98e24
+#define EARTH_RADIUS 6.378e6
+
 // higher fluid density, more drag
 const struct FluidDensities {
     const float AirSTP = 1.292f;
@@ -49,6 +53,8 @@ public:
     }
 
     bool OnUserCreate() override{
+
+        gravityAccel = GRAV_CONST * EARTH_MASS / (EARTH_RADIUS * EARTH_RADIUS);
 
         finishLine = 500.0f / pixelsPerMeter;
 
@@ -223,7 +229,11 @@ public:
                 + " kg/m^3", olc::BLACK);
             DrawStringDecal({ 5.0f, 380.0f }, "Radius: " + std::to_string(firstObj->radius)
                 + " m", olc::BLACK);
-            
+           
+            // g = GM/r^2
+            float distFromEarth = EARTH_RADIUS - firstObj->pos.y;
+            gravityAccel = GRAV_CONST * EARTH_MASS / (distFromEarth * distFromEarth);
+
             // scope deletes automatically, i believe
             // delete firstObj;
 
@@ -255,7 +265,7 @@ private:
     std::vector<Object> objects;
 
     float pixelsPerMeter = 20.0f; // conversion from screen space to world space
-    float gravityAccel = 9.8f;
+    float gravityAccel = 0.0f;
 
     FluidDensities _fluidDensities;
     DragCoefficients _dragCoefficients;
