@@ -38,7 +38,7 @@ void Object::Update(float& fElapsedTime, float& gravity, double &relativeGroundY
 	// reference area is the projected frontal area, not always its cross-sectional area
 	vec2D velSquared = vec2DElementwiseMult(vel.abs(), vel * -1.0f);
 	vec2D dragForce = velSquared * (0.5 * fluidDensity * dragCoefficient);
-	// forces.push_back(dragForce); // drag force (f_d = 0.5*p*C*A*v^2)
+	forces.push_back(dragForce); // drag force (f_d = 0.5*p*C*A*v^2)
 
 	float displacedVolume = 0.0f;
 	if (pos.y > radius) displacedVolume = volume;

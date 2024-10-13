@@ -212,11 +212,12 @@ public:
                 std::to_string(firstObj->stopwatch) + "sec", olc::BLACK);
 
             if (envFluidDensity == _fluidDensities.Vacuum) {
-                DrawStringDecal({ 5.0f, 300.0f }, "Translational forces at play:\nGravity",
+                DrawStringDecal({ 5.0f, 300.0f }, 
+                    "Translational forces at play : \nGravity\nNormal (during collision)",
                     olc::BLACK);
             }
             else {
-                DrawStringDecal({ 5.0f, 300.0f }, "Translational forces at play:\nGravity\nDrag\nBuoyancy",
+                DrawStringDecal({ 5.0f, 300.0f }, "Translational forces at play:\nGravity\nDrag\nBuoyancy\nNormal (during collision)",
                     olc::BLACK);
             }
 
